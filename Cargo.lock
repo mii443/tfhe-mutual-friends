@@ -1905,6 +1905,7 @@ name = "tfhe-mutual-friends"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "rayon",
  "rpassword",
  "serde",
  "serde_bytes",
