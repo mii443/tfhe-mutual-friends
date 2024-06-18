@@ -1,0 +1,15 @@
+[package]
+name = "tfhe-mutual-friends"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tfhe = { version = "*", features = ["boolean", "shortint", "integer", "x86_64-unix"] }
+vrchatapi = { git = "https://github.com/C0D3-M4513R/vrchatapi-rust.git", rev = "41255a7932d5626effec7421bad001703c977a31" }
+serde_json = "1.0"
+bincode = "1.3.3"
+serde_bytes = "0.11.14"
+serde = "1.0"
+zstd = "0.13.1"
+rpassword = "0.0.4"
+tokio = { version = "1.38.0", features = ["full"] }
