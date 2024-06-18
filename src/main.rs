@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 async fn calc_phase() -> Result<(), Box<dyn std::error::Error>> {
     println!("ローカルデータ読み込み中...");
-    let (my_friends, client_key) = load_local_secret_data().await.unwrap();
+    let (my_friends, _client_key) = load_local_secret_data().await.unwrap();
 
     println!("相手の暗号化済みフレンドリストの読み込み中...");
     let (remote_data, server_keys) = load_remote_data().await.unwrap();
@@ -59,6 +59,13 @@ async fn calc_phase() -> Result<(), Box<dyn std::error::Error>> {
     for res in compared {
         result.push(res.iter().fold(sample.clone(), |acc, x| (acc | x)));
     }
+
+    println!("データの整形中...");
+    let serialized_compared_friends: SerializedComparedFriends = SerializedComparedFriends { friends: result.iter().map(|f| SerializedComparedFriend { value: bincode::serialize(f).unwrap() }).collect() };
+
+    println!("データの保存中...");
+    let mut file = File::create("mutual_friends").unwrap();
+    bincode::serialize_into(&mut file, &serialized_compared_friends).unwrap();
 
     Ok(())
 }
@@ -190,6 +197,17 @@ struct SerializedFriends {
 
 #[derive(Serialize, Deserialize)]
 struct SerializedFriend {
+    #[serde(with = "serde_bytes")]
+    value: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct SerializedComparedFriends {
+    friends: Vec<SerializedComparedFriend>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct SerializedComparedFriend {
     #[serde(with = "serde_bytes")]
     value: Vec<u8>,
 }
